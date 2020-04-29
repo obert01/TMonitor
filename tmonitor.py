@@ -3,12 +3,12 @@ import sqlite3
 
 class MyStreamer(TwythonStreamer):
     def on_success(self, data):
-         print 'By         : @' + data['user']['screen_name'].encode('utf-8')
-         print 'Text       : ' + data['text'].encode('utf-8')
-         url = 'https://twitter.com/' + data['user']['screen_name'].encode('utf-8') + '/status/' + data['id_str'].encode('utf-8')
-         print 'URL        : ' + url
-         print 'Created at : ' + data['created_at'].encode('utf-8')
-         print ''
+         print('By         : @' + str(data['user']['screen_name']))
+         print('Text       : ' + str(data['text']))
+         url = 'https://twitter.com/' + str(data['user']['screen_name']) + '/status/' + str(data['id_str'])
+         print('URL        : ' + url)
+         print('Created at : ' + str(data['created_at']))
+         print('')
          global db_name
          conn = sqlite3.connect(db_name)
          try:
@@ -21,7 +21,7 @@ class MyStreamer(TwythonStreamer):
            conn.close()
 
     def on_error(self, status_code, data):
-        print status_code
+        print(status_code)
         self.disconnect()
 
 APP_KEY = ''
@@ -30,14 +30,14 @@ OAUTH_TOKEN = ''
 OAUTH_TOKEN_SECRET = ''
 
 stream = MyStreamer(APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
-key = raw_input("Enter key word: ")
+key = input("Enter key word: ")
 db_name = key + '.db'
 conn = sqlite3.connect(db_name)
-conn.execute('''CREATE TABLE TWEET
+conn.execute('''CREATE TABLE TWEET IF NOT EXISTS
          ( USERNAME TEXT NOT NULL,
            TWEET    TEXT NOT NULL,
            URL      CHAR(50),
            TIME     TEXT);''')
-print "Table created successfully"
+print("Table created successfully")
 conn.close()
 stream.statuses.filter(track=key)
