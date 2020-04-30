@@ -1,5 +1,8 @@
+#!/usr/bin/env python3
+
 from twython import TwythonStreamer
 import sqlite3
+from keys import APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET
 
 class MyStreamer(TwythonStreamer):
     def on_success(self, data):
@@ -20,20 +23,15 @@ class MyStreamer(TwythonStreamer):
          finally:
            conn.close()
 
-    def on_error(self, status_code, data):
-        print(status_code)
+    def on_error(self, status_code, content, headers):
+        print(str(status_code) + " - " + str(content))
         self.disconnect()
-
-APP_KEY = ''
-APP_SECRET = ''
-OAUTH_TOKEN = ''
-OAUTH_TOKEN_SECRET = ''
 
 stream = MyStreamer(APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
 key = input("Enter key word: ")
 db_name = key + '.db'
 conn = sqlite3.connect(db_name)
-conn.execute('''CREATE TABLE TWEET IF NOT EXISTS
+conn.execute('''CREATE TABLE IF NOT EXISTS TWEET
          ( USERNAME TEXT NOT NULL,
            TWEET    TEXT NOT NULL,
            URL      CHAR(50),
